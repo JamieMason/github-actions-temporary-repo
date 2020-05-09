@@ -13,12 +13,16 @@ jobs:
         id: get-hashes
         run: |
           REPO=https://api.github.com/repos/fkling/astexplorer/commits?per_page=1
-          echo ::set-output name=upstream_commit::$(curl -sL $REPO | jq -r ".[0].sha")
-          echo ::set-output name=local_commit::$(cat upstream-latest.txt)
+          UPSTREAM_COMMIT=$(curl -sL $REPO | jq -r ".[0].sha" | tr -d '[:space:]')
+          LOCAL_COMMIT=$(cat upstream-latest.txt | tr -d '[:space:]')
+          echo UPSTREAM_COMMIT: $UPSTREAM_COMMIT
+          echo LOCAL_COMMIT: $LOCAL_COMMIT
+          echo ::set-output name=upstream_commit::$UPSTREAM_COMMIT
+          echo ::set-output name=local_commit::$LOCAL_COMMIT
       - name: Echo Values
         run: |
-          echo upstream_commit is {{ steps.get-hashes.outputs.upstream_commit }}
-          echo local_commit is {{ steps.get-hashes.outputs.local_commit }}
+          echo upstream_commit is ${{ steps.get-hashes.outputs.upstream_commit }}
+          echo local_commit is ${{ steps.get-hashes.outputs.local_commit }}
       - name: Echo if Same
         if: steps.get-hashes.outputs.upstream_commit == steps.get-hashes.outputs.local_commit
         run: |
