@@ -13,6 +13,7 @@
   "manager": "yarn",
   "repository": "JamieMason/github-actions-temporary-repo.git",
   "scripts": {
+    "build": "echo 'build'",
     "test": "jest"
   }
 }

@@ -14,13 +14,13 @@ jobs:
       - name: Build
         run: echo ${{ github.sha }} > Release.txt
       - name: Test
-        run: cat Release.txt
+        uses: ./.github/actions/yarn-test
       - name: Generate Changelog
-        run: echo "# Good things have arrived" > ${{ github.ref }}-CHANGELOG.txt
+        run: echo "# Good things have arrived" > CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: ${{ github.ref }}-CHANGELOG.txt
+          body_path: CHANGELOG.txt
           files: Release.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
