@@ -16,11 +16,11 @@ jobs:
       - name: Test
         run: cat Release.txt
       - name: Generate Changelog
-        run: echo "# Good things have arrived" > ${{ github.workflow }}-CHANGELOG.txt
+        run: echo "# Good things have arrived" > ${{ github.ref }}-CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: ${{ github.workflow }}-CHANGELOG.txt
+          body_path: ${{ github.ref }}-CHANGELOG.txt
           files: Release.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
