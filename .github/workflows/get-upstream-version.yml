@@ -40,18 +40,15 @@ jobs:
 
           echo "Commit Hash $latest_commit is now the newest"
           echo $latest_commit > upstream-latest.txt
-      - name: Echo if Same
-        if: steps.get-latest-commit.outputs.has_changed == true
-        run: |
-          echo 'Same'
-          echo ${{ steps.get-latest-commit.outputs.has_changed }}
-      - name: Echo if Different
-        if: steps.get-latest-commit.outputs.has_changed != true
-        run: |
-          echo 'Different'
-          echo ${{ steps.get-latest-commit.outputs.has_changed }}
-  display:
+  display-if-changed:
     runs-on: ubuntu-latest
     needs: get-latest-commit
+    if: needs.get-latest-commit.outputs.has_changed == true
+    steps:
+      - run: echo ${{needs.get-latest-commit.outputs.has_changed}} ${{needs.get-latest-commit.outputs.latest_commit}}
+  display-if-unchanged:
+    runs-on: ubuntu-latest
+    needs: get-latest-commit
+    if: needs.get-latest-commit.outputs.has_changed != true
     steps:
       - run: echo ${{needs.get-latest-commit.outputs.has_changed}} ${{needs.get-latest-commit.outputs.latest_commit}}
