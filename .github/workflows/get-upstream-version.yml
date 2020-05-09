@@ -51,6 +51,8 @@ jobs:
           mkdir -p ./vendor/astexplorer
           mv ./astexplorer/website ./vendor/astexplorer
           rm -rf ./astexplorer
+          latest_commit=${{needs.get-latest-commit.outputs.latest_commit}}
+          echo $latest_commit > upstream-latest.txt
       - name: Create Pull Request
         id: create-pr
         uses: peter-evans/create-pull-request@v2
