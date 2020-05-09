@@ -18,7 +18,6 @@ jobs:
           mv ./astexplorer/website ./vendor/astexplorer
           rm -rf ./astexplorer
       - uses: actions/upload-artifact@v2
-      - name: Package Upstream
         with:
           name: astexplorer
           path: vendor/astexplorer
