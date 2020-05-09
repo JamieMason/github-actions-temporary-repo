@@ -1,0 +1,19 @@
+name: Sync Upstream
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Clone Upstream
+      run: |
+        rm -rf ./astexplorer
+        git clone https://github.com/fkling/astexplorer.git
+        rm -rf ./vendor
+        mkdir -p ./vendor/astexplorer
+        mv ./astexplorer/website ./vendor/astexplorer
+        rm -rf ./astexplorer
