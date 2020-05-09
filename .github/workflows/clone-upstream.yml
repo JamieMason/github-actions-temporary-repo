@@ -2,7 +2,7 @@ name: Sync Upstream
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
