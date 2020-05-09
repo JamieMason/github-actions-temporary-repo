@@ -1,3 +1,3 @@
-it("is a failing test", () => {
-  expect(2 + 2).toEqual(9);
+it("is a passing test", () => {
+  expect(2 + 2).toEqual(4);
 });
