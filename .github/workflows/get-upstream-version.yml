@@ -52,3 +52,28 @@ jobs:
     if: needs.get-latest-commit.outputs.has_changed != 'true'
     steps:
       - run: echo ${{needs.get-latest-commit.outputs.has_changed}} ${{needs.get-latest-commit.outputs.latest_commit}}
+  pull-latest:
+    runs-on: ubuntu-latest
+    needs: get-latest-commit
+    if: needs.get-latest-commit.outputs.has_changed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Clone Upstream
+        run: |
+          rm -rf ./astexplorer
+          git clone https://github.com/fkling/astexplorer.git
+          rm -rf ./vendor
+          mkdir -p ./vendor/astexplorer
+          mv ./astexplorer/website ./vendor/astexplorer
+          rm -rf ./astexplorer
+  createPullRequest:
+    runs-on: ubuntu-latest
+    needs: get-latest-commit
+    steps:
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pr_number }}"
