@@ -1,0 +1,29 @@
+name: Poll Upstream
+
+on: push
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      - name: Fetch Latest Commit Hash
+        id: get-commit-hashes
+        run: |
+          REPO=https://api.github.com/repos/fkling/astexplorer/commits?per_page=1
+          echo ::set-output name=upstream_commit::$(curl -sL $REPO | jq -r ".[0].sha")
+          echo ::set-output name=local_commit::$(cat upstream-latest.txt)
+      - name: Echo Values
+        run: |
+          echo upstream_commit is {{ steps.upstream_commit.outputs.upstream_commit }}
+          echo local_commit is {{ steps.upstream_commit.outputs.local_commit }}
+      - name: Echo if Same
+        if: steps.upstream_commit.outputs.upstream_commit == steps.upstream_commit.outputs.local_commit
+        run: |
+          echo 'Same'
+      - name: Echo if Different
+        if: steps.upstream_commit.outputs.upstream_commit == steps.upstream_commit.outputs.local_commit
+        run: |
+          echo 'Different'
