@@ -75,6 +75,8 @@ jobs:
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
