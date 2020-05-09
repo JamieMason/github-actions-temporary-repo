@@ -12,22 +12,35 @@ jobs:
       - name: Fetch Latest Commit Hash
         id: get-hashes
         run: |
-          REPO=https://api.github.com/repos/fkling/astexplorer/commits?per_page=1
-          UPSTREAM_COMMIT=$(curl -sL $REPO | jq -r ".[0].sha" | tr -d '[:space:]')
-          LOCAL_COMMIT=$(cat upstream-latest.txt | tr -d '[:space:]')
-          echo UPSTREAM_COMMIT: $UPSTREAM_COMMIT
-          echo LOCAL_COMMIT: $LOCAL_COMMIT
-          echo ::set-output name=upstream_commit::$UPSTREAM_COMMIT
-          echo ::set-output name=local_commit::$LOCAL_COMMIT
-      - name: Echo Values
-        run: |
-          echo upstream_commit is ${{ steps.get-hashes.outputs.upstream_commit }}
-          echo local_commit is ${{ steps.get-hashes.outputs.local_commit }}
+          api_url=https://api.github.com/repos/fkling/astexplorer/commits?per_page=1
+          latest_commit=$(curl -sL $api_url | jq -r ".[0].sha" | tr -d '[:space:]')
+          last_known_commit=$(cat upstream-latest.txt | tr -d '[:space:]')
+          commit_hash_regex="[0-9a-z]{40}"
+
+          if ! [[ $latest_commit =~ $commit_hash_regex ]]; then
+            echo "Upstream Commit Hash $latest_commit is invalid"
+            exit 1
+          fi
+
+          if ! [[ $last_known_commit =~ $commit_hash_regex ]]; then
+            echo "Local Commit Hash $last_known_commit is invalid"
+            exit 1
+          fi
+
+          if [[ $latest_commit = $last_known_commit ]]; then
+            echo "Commit Hash $last_known_commit is still the newest"
+            exit 0
+          fi
+
+          echo $latest_commit > upstream-latest.txt
+          echo ::set-output name=has_changed::true
       - name: Echo if Same
-        if: steps.get-hashes.outputs.upstream_commit == steps.get-hashes.outputs.local_commit
+        if: steps.get-hashes.outputs.has_changed == true
         run: |
           echo 'Same'
+          echo ${{ steps.get-hashes.outputs.has_changed }}
       - name: Echo if Different
-        if: steps.get-hashes.outputs.upstream_commit == steps.get-hashes.outputs.local_commit
+        if: steps.get-hashes.outputs.has_changed != true
         run: |
           echo 'Different'
+          echo ${{ steps.get-hashes.outputs.has_changed }}
