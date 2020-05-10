@@ -1,6 +1,8 @@
 name: Get Latest Upstream Version
 
-on: push
+on:
+  schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   get-latest-commit:
@@ -58,10 +60,10 @@ jobs:
         uses: peter-evans/create-pull-request@v2
         with:
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
-          commit-message: 'feat(astexplorer): pull latest astexplorer.net'
+          commit-message: "feat(astexplorer): pull latest astexplorer.net"
           committer: Jamie Mason <jamie@foldleft.io>
           author: Jamie Mason <jamie@foldleft.io>
-          title: 'Pull latest astexplorer.net'
+          title: "Pull latest astexplorer.net"
       - name: Check outputs
         run: |
           latest_commit=${{needs.get-latest-commit.outputs.latest_commit}}

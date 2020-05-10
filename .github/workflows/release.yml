@@ -1,0 +1,26 @@
+name: Create Release from Tag
+
+on: push
+
+jobs:
+  release:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: yarn install
+      - run: yarn test
+      - run: echo 'XXXXX' > 'x.txt'
+      - uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ref: ${{github.ref}}
+            head_ref: ${{github.head_ref}}
+            base_ref: ${{github.base_ref}}
+            startsWith(github.ref, 'refs/tags/'): ${{startsWith(github.ref, 'refs/tags/')}}
+          files: x.txt
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
